@@ -17,20 +17,46 @@ import {
   RegistrationSchemaType,
   registrationSchema,
 } from "@/schemas/registration.schema";
-import { FormEvent } from "react";
 import Error from "@/components/Error";
+import { useState } from "react";
+import axios from "axios";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function Home() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<RegistrationSchemaType>({
     resolver: zodResolver(registrationSchema),
   });
 
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+
   const submit = async (data: RegistrationSchemaType) => {
     console.log(data);
+
+    try {
+      setLoading(true);
+      const res = await axios.post("/api/register", data);
+
+      toast({
+        title: res.data,
+        duration: 5000,
+      });
+      reset();
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: "Internal Server error",
+        duration: 5000,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,7 +117,7 @@ export default function Home() {
                   <Label htmlFor="r5">Mechanical</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Robotics & Automation" id="r6" />
+                  <RadioGroupItem value="Robotics" id="r6" />
                   <Label htmlFor="r6">Robotics & Automation</Label>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -107,8 +133,26 @@ export default function Home() {
                   <Label htmlFor="r9">Civil</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="E&TC" id="r10" />
+                  <RadioGroupItem value="ENTC" id="r10" />
                   <Label htmlFor="r10">E&TC</Label>
+                </div>
+              </RadioGroup>
+            </div>
+
+            <div className="text-neutral-600">
+              <Label className="font-bold">Year:</Label>
+
+              <RadioGroup
+                defaultValue="A"
+                className="my-2"
+                {...register("year")}>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="SY" id="r1" />
+                  <Label htmlFor="r1">SY</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="TY" id="r2" />
+                  <Label htmlFor="r2">TY</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -136,7 +180,13 @@ export default function Home() {
           </div>
 
           <div className="p-4 gap-2 flex">
-            <Button type="submit">Register</Button>
+            <Button type="submit" disabled={loading}>
+              {loading ? (
+                <Loader2 className="animate-spin duration-300" />
+              ) : (
+                "Register"
+              )}
+            </Button>
             <Button variant="secondary">Clear form</Button>
           </div>
         </form>

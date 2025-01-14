@@ -15,9 +15,10 @@ export const registrationSchema = z.object({
     "Chemical",
     "Electrical",
     "Civil",
-    "E&TC",
-    "Robotics & Automation",
+    "ENTC",
+    "Robotics",
   ]),
+  year: z.enum(["SY", "TY"]),
   division: z.enum(["A", "B"]),
   phone: z.string().regex(/^\d{10}$/, {
     message: "Phone number must be exactly 10 digits",
