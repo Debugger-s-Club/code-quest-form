@@ -12,6 +12,19 @@ export const POST = async (req: Request) => {
       phone,
     }: RegistrationSchemaType = await req.json();
 
+    const notUniqueRegistration = await prisma.registration.findFirst({
+      where: {
+        OR: [{ email }, { phone }],
+      },
+    });
+
+    if (notUniqueRegistration) {
+      return new Response(
+        "Registration with the same email or phone number already exists",
+        { status: 400 }
+      );
+    }
+
     await prisma.registration.create({
       data: {
         name,
