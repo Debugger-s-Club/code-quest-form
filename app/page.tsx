@@ -48,10 +48,11 @@ export default function Home() {
         duration: 5000,
       });
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       toast({
-        title: "Internal Server error",
+        title: error.response.data,
+        variant: "destructive",
         duration: 5000,
       });
     } finally {
@@ -64,7 +65,7 @@ export default function Home() {
       {/* HEADER */}
       <div className="text-center flex flex-col gap-2">
         <h1 className="text-4xl font-extrabold text-neutral-800">
-          DEBUGGER'S CLUB
+          DEBUGGER&apos;S CLUB
         </h1>
         <h3 className="font-bold text-2xl text-neutral-700">Code-quest</h3>
 
@@ -143,7 +144,7 @@ export default function Home() {
               <Label className="font-bold">Year:</Label>
 
               <RadioGroup
-                defaultValue="A"
+                defaultValue="SY"
                 className="my-2"
                 {...register("year")}>
                 <div className="flex items-center space-x-2">
@@ -187,7 +188,9 @@ export default function Home() {
                 "Register"
               )}
             </Button>
-            <Button variant="secondary">Clear form</Button>
+            <Button variant="secondary" onClick={() => reset()}>
+              Clear form
+            </Button>
           </div>
         </form>
       </Card>
